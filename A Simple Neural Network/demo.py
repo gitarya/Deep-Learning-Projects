@@ -8,8 +8,40 @@ class NeuralNetwork():
 
         # We model a single neuron, with 3 input connections and 1 output connectionsself.
         # We assign random weights to a 3 * 1 matrix, with values in the range -1
+        # and mean 0
+        self.synaptic_weights = 2 * random.random((3,1)) - 1
 
-if __name__ == '__main__':
+    # The sigmoid function, which describes an s shaped curve
+    # We pass the weighted sum of the inouts through this function
+    # to normalise them between 0 and 1
+    def __sigmoid(self, x):
+        return 1/(1 + exp(-x))
+
+    # gradient of the sigmoid curve
+    def __sigmoid_derivative(self, x):
+        return x * (1-x)
+
+    def train(self, training_set_inputs, training_set_outputs, number_of_training_iterations):
+        for iteration in range(number_of_training_iterations):
+            # pass the training set through our neural network
+            output = self.think(training_set_inputs)
+
+            # calculate the error
+            error = training_set_outputs - output
+
+            # multiply the error by the input and again by the gradient of the sigmoid curve
+            adjustment = dot(training_set_inputs.T, error * self.__sigmoid_derivative(output))
+
+            # adjust the synaptic_weights
+            self.synaptic_weights += adjustment
+
+    def think(self, inputs):
+    # pass inouts through our neural network
+        return self.__sigmoid(dot(inputs, self.synaptic_weights))
+
+
+
+if __name__ == "__main__":
 
     #initialize a single neuron neural network
     neural_network = NeuralNetwork()
@@ -31,4 +63,4 @@ if __name__ == '__main__':
 
     # Test the neural neural_network
     print('Considering new situation [1, 0, 0] -> ?:')
-    print neural_network.think(array[1, 0, 0])
+    print( neural_network.think(array([1, 0, 0]))
